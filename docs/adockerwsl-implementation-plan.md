@@ -778,7 +778,7 @@ git commit -m "feat: add minimal project presentation sites"
 - Consumes: Each project's `GET /health` JSON endpoint and the three public browser URLs.
 - Produces: `GET /api/projects/status` with the stable `projects[]` contract and a Vue dashboard that refreshes every 5000 milliseconds.
 
-- [ ] **Step 1: Write failing Unify status tests**
+- [x] **Step 1: Write failing Unify status tests**
 
 Create `unify/tests/Feature/ProjectStatusTest.php`:
 
@@ -857,7 +857,7 @@ class ProjectStatusTest extends TestCase
 }
 ```
 
-- [ ] **Step 2: Run the focused tests to verify they fail**
+- [x] **Step 2: Run the focused tests to verify they fail**
 
 Run:
 
@@ -872,7 +872,7 @@ docker run --rm \
 
 Expected: failures because the service, controller, routes, and dashboard do not exist.
 
-- [ ] **Step 3: Define the project registry**
+- [x] **Step 3: Define the project registry**
 
 Create `unify/config/projects.php`:
 
@@ -907,7 +907,7 @@ return [
 ];
 ```
 
-- [ ] **Step 4: Implement status aggregation with failure isolation**
+- [x] **Step 4: Implement status aggregation with failure isolation**
 
 Create `unify/app/Services/ProjectStatusService.php`:
 
@@ -947,7 +947,7 @@ class ProjectStatusService
 }
 ```
 
-- [ ] **Step 5: Implement the controller and routes**
+- [x] **Step 5: Implement the controller and routes**
 
 Create `unify/app/Http/Controllers/ProjectStatusController.php`:
 
@@ -999,7 +999,7 @@ Route::get('/health', function () {
 });
 ```
 
-- [ ] **Step 6: Create the Unify Blade shell**
+- [x] **Step 6: Create the Unify Blade shell**
 
 Create `unify/resources/views/app.blade.php`:
 
@@ -1018,7 +1018,7 @@ Create `unify/resources/views/app.blade.php`:
 </html>
 ```
 
-- [ ] **Step 7: Create the polling Vue dashboard**
+- [x] **Step 7: Create the polling Vue dashboard**
 
 Create `unify/resources/js/components/App.vue`:
 
@@ -1096,7 +1096,7 @@ onBeforeUnmount(() => window.clearInterval(timer));
 </template>
 ```
 
-- [ ] **Step 8: Run Unify verification**
+- [x] **Step 8: Run Unify verification**
 
 Run:
 
@@ -1112,7 +1112,7 @@ npm --prefix unify run build
 
 Expected: all five feature tests pass and Vite builds the dashboard successfully.
 
-- [ ] **Step 9: Commit Unify**
+- [x] **Step 9: Commit Unify**
 
 Run:
 
