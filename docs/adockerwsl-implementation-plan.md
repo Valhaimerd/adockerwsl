@@ -1138,7 +1138,7 @@ git commit -m "feat: add health-aware Unify dashboard"
 - Consumes: A complete Laravel/Vue application directory as its Docker build context.
 - Produces: Four independently buildable Apache/PHP images listening on container port `80`.
 
-- [ ] **Step 1: Add the same Docker ignore policy to every application**
+- [x] **Step 1: Add the same Docker ignore policy to every application**
 
 Create `.dockerignore` in each application:
 
@@ -1151,7 +1151,7 @@ public/build
 storage/logs/*
 ```
 
-- [ ] **Step 2: Add the same Apache virtual host to every application**
+- [x] **Step 2: Add the same Apache virtual host to every application**
 
 Create `docker/apache.conf` in each application:
 
@@ -1171,7 +1171,7 @@ Create `docker/apache.conf` in each application:
 </VirtualHost>
 ```
 
-- [ ] **Step 3: Add the same database-aware entrypoint to every application**
+- [x] **Step 3: Add the same database-aware entrypoint to every application**
 
 Create `docker/entrypoint.sh` in each application and mark it executable:
 
@@ -1204,7 +1204,7 @@ Run:
 chmod +x unify/docker/entrypoint.sh project1/docker/entrypoint.sh project2/docker/entrypoint.sh project3/docker/entrypoint.sh
 ```
 
-- [ ] **Step 4: Add the same multi-stage Dockerfile to every application**
+- [x] **Step 4: Add the same multi-stage Dockerfile to every application**
 
 Create `Dockerfile` in each application:
 
@@ -1244,7 +1244,7 @@ ENTRYPOINT ["app-entrypoint"]
 CMD ["apache2-foreground"]
 ```
 
-- [ ] **Step 5: Build every image independently**
+- [x] **Step 5: Build every image independently**
 
 Run:
 
@@ -1257,7 +1257,7 @@ docker build --tag local/adockerwsl-project3:development project3
 
 Expected: all four builds succeed and each final image contains Apache, `pdo_pgsql`, optimized Composer dependencies, and Vite's `public/build/manifest.json`.
 
-- [ ] **Step 6: Inspect the final image rather than trusting the build log**
+- [x] **Step 6: Inspect the final image rather than trusting the build log**
 
 Run:
 
@@ -1268,7 +1268,7 @@ docker run --rm --entrypoint test local/adockerwsl-unify:development -f /var/www
 
 Expected: `pdo_pgsql` is printed and the manifest check exits successfully.
 
-- [ ] **Step 7: Commit container definitions**
+- [x] **Step 7: Commit container definitions**
 
 Run:
 
