@@ -26,6 +26,7 @@
 - Never commit `.env`, credentials, Composer `vendor`, npm `node_modules`, or built Vite assets.
 - Do not run Docker cleanup commands that can affect unrelated projects.
 - Keep automatic Kali deployment disabled unless `KALI_DEPLOY_ENABLED=true` and the labeled isolated runner is ready.
+- When preparing a pull request, fill `.github/pull_request_template.md` without renaming, removing, reordering, or regenerating its headers.
 - Use test-driven development for application behavior and make the smallest task-scoped change.
 
 ## Minimal skill set
