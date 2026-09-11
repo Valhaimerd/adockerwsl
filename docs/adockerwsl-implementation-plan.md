@@ -1291,7 +1291,7 @@ git commit -m "build: add Laravel application images"
 - Consumes: Four application images listening on port `80`.
 - Produces: Compose DNS names, database credentials, health checks, host-port mappings, and the `postgres_data` named volume.
 
-- [ ] **Step 1: Create the PostgreSQL initialization script**
+- [x] **Step 1: Create the PostgreSQL initialization script**
 
 Create `docker/postgres/init-databases.sh` and mark it executable:
 
@@ -1333,7 +1333,7 @@ sh -n docker/postgres/init-databases.sh
 
 Expected: the shell syntax check succeeds.
 
-- [ ] **Step 2: Define safe local demonstration defaults**
+- [x] **Step 2: Define safe local demonstration defaults**
 
 Create `.env.example`:
 
@@ -1371,7 +1371,7 @@ docker run --rm --entrypoint php local/adockerwsl-project3:development artisan k
 
 Expected: `.env` contains four non-empty keys and remains ignored by Git.
 
-- [ ] **Step 3: Create the complete Compose file**
+- [x] **Step 3: Create the complete Compose file**
 
 Create `docker.yaml`:
 
@@ -1499,7 +1499,7 @@ volumes:
   postgres_data:
 ```
 
-- [ ] **Step 4: Validate the resolved topology and secrets boundary**
+- [x] **Step 4: Validate the resolved topology and secrets boundary**
 
 Run:
 
@@ -1512,7 +1512,7 @@ git diff --check
 
 Expected services, in order: `unify`, `project1`, `project2`, `project3`, and `postgres`. `.env` is reported as ignored and no whitespace errors are found.
 
-- [ ] **Step 5: Commit database and Compose configuration**
+- [x] **Step 5: Commit database and Compose configuration**
 
 Run:
 

@@ -1,0 +1,121 @@
+name: adockerwsl
+
+x-laravel-environment: &laravel-environment
+  APP_ENV: production
+  APP_DEBUG: "false"
+  LOG_CHANNEL: stderr
+  DB_CONNECTION: pgsql
+  DB_HOST: postgres
+  DB_PORT: "5432"
+
+x-laravel-service: &laravel-service
+  restart: unless-stopped
+  depends_on:
+    postgres:
+      condition: service_healthy
+  healthcheck:
+    test: ["CMD", "curl", "--fail", "--silent", "http://localhost/health"]
+    interval: 5s
+    timeout: 2s
+    retries: 6
+    start_period: 20s
+
+services:
+  unify:
+    <<: *laravel-service
+    image: ${IMAGE_PREFIX:-local}/adockerwsl-unify:${IMAGE_TAG:-development}
+    build:
+      context: ./unify
+    environment:
+      <<: *laravel-environment
+      APP_NAME: Unify
+      APP_KEY: ${UNIFY_APP_KEY}
+      APP_URL: http://localhost:8080
+      DB_DATABASE: unify_db
+      DB_USERNAME: unify_app
+      DB_PASSWORD: ${UNIFY_DB_PASSWORD}
+      PROJECT1_HEALTH_URL: http://project1/health
+      PROJECT2_HEALTH_URL: http://project2/health
+      PROJECT3_HEALTH_URL: http://project3/health
+      PROJECT1_PUBLIC_URL: http://localhost:8081
+      PROJECT2_PUBLIC_URL: http://localhost:8082
+      PROJECT3_PUBLIC_URL: http://localhost:8083
+    ports:
+      - "8080:80"
+
+  project1:
+    <<: *laravel-service
+    image: ${IMAGE_PREFIX:-local}/adockerwsl-project1:${IMAGE_TAG:-development}
+    build:
+      context: ./project1
+    environment:
+      <<: *laravel-environment
+      APP_NAME: Project 1
+      APP_KEY: ${PROJECT1_APP_KEY}
+      APP_URL: http://localhost:8081
+      UNIFY_PUBLIC_URL: http://localhost:8080
+      DB_DATABASE: project1_db
+      DB_USERNAME: project1_app
+      DB_PASSWORD: ${PROJECT1_DB_PASSWORD}
+    ports:
+      - "8081:80"
+
+  project2:
+    <<: *laravel-service
+    image: ${IMAGE_PREFIX:-local}/adockerwsl-project2:${IMAGE_TAG:-development}
+    build:
+      context: ./project2
+    environment:
+      <<: *laravel-environment
+      APP_NAME: Project 2
+      APP_KEY: ${PROJECT2_APP_KEY}
+      APP_URL: http://localhost:8082
+      UNIFY_PUBLIC_URL: http://localhost:8080
+      DB_DATABASE: project2_db
+      DB_USERNAME: project2_app
+      DB_PASSWORD: ${PROJECT2_DB_PASSWORD}
+    ports:
+      - "8082:80"
+
+  project3:
+    <<: *laravel-service
+    image: ${IMAGE_PREFIX:-local}/adockerwsl-project3:${IMAGE_TAG:-development}
+    build:
+      context: ./project3
+    environment:
+      <<: *laravel-environment
+      APP_NAME: Project 3
+      APP_KEY: ${PROJECT3_APP_KEY}
+      APP_URL: http://localhost:8083
+      UNIFY_PUBLIC_URL: http://localhost:8080
+      DB_DATABASE: project3_db
+      DB_USERNAME: project3_app
+      DB_PASSWORD: ${PROJECT3_DB_PASSWORD}
+    ports:
+      - "8083:80"
+
+  postgres:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+      UNIFY_DB_PASSWORD: ${UNIFY_DB_PASSWORD}
+      PROJECT1_DB_PASSWORD: ${PROJECT1_DB_PASSWORD}
+      PROJECT2_DB_PASSWORD: ${PROJECT2_DB_PASSWORD}
+      PROJECT3_DB_PASSWORD: ${PROJECT3_DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-databases.sh:/docker-entrypoint-initdb.d/10-init-databases.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres_data:
