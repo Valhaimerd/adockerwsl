@@ -2,12 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Models\Course;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use Tests\TestCase;
 
 class ProjectPageTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,8 +23,37 @@ class ProjectPageTest extends TestCase
     {
         $this->get('/')
             ->assertOk()
-            ->assertSee('Project 3')
-            ->assertSee('Future Work');
+            ->assertSee('Courses')
+            ->assertSee('Course Catalog');
+    }
+
+    public function test_courses_can_be_created_listed_updated_and_deleted(): void
+    {
+        $created = $this->postJson('/api/courses', [
+            'code' => 'CS101',
+            'title' => 'Introduction to Computing',
+            'instructor' => 'Grace Dela Cruz',
+        ])->assertCreated()->json('data');
+
+        $this->getJson('/api/courses')
+            ->assertOk()
+            ->assertJsonPath('data.0.code', 'CS101');
+
+        $this->putJson('/api/courses/'.$created['id'], [
+            'code' => 'CS102',
+            'title' => 'Programming Fundamentals',
+            'instructor' => 'Grace Dela Cruz',
+        ])->assertOk()->assertJsonPath('data.code', 'CS102');
+
+        $this->deleteJson('/api/courses/'.$created['id'])->assertNoContent();
+        $this->assertDatabaseCount((new Course)->getTable(), 0);
+    }
+
+    public function test_course_fields_are_required(): void
+    {
+        $this->postJson('/api/courses', [])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['code', 'title', 'instructor']);
     }
 
     public function test_health_reports_the_service_and_database(): void

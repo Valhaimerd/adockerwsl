@@ -25,7 +25,9 @@ Wait until all five services report `healthy`, then show the group in Docker Des
 ## 4. Show the sites — 3 minutes
 
 - Open `http://localhost:8080`.
-- Open each available project card and use its Back to Unify link.
+- Open Students, Faculty, and Courses from their renamed cards.
+- Add one record in each app and demonstrate editing one record.
+- Return to Unify and show the three databases combined in the read-only School data overview, then optionally demonstrate delete.
 - Optionally open `http://localhost:8081`, `http://localhost:8082`, and `http://localhost:8083` directly.
 - Refresh pgAdmin on `localhost:5433` and show the four databases.
 
@@ -35,14 +37,14 @@ Wait until all five services report `healthy`, then show the group in Docker Des
 docker compose -f docker.yaml stop project2
 ```
 
-- Wait at most five seconds and show the grey Project 2 card.
-- Point out that Unify and the other projects are still running.
+- Wait at most five seconds and show the grey Faculty card and its offline overview section.
+- Point out that Unify, Students, and Courses are still running.
 
 ```bash
 docker compose -f docker.yaml start project2
 ```
 
-- Show the Project 2 card recover automatically.
+- Show the Faculty card and overview recover automatically.
 
 ## 6. Show staging images — 3 minutes
 

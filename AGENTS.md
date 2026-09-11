@@ -13,14 +13,15 @@
 - Preserve host ports 8080, 8081, 8082, 8083, and 5433.
 - Use Compose service names for internal traffic; never use fixed container IP addresses.
 - Keep four separate databases and application roles inside the single PostgreSQL container.
-- Keep Project 1–3 navigation-only and preserve Unify's automatic health-card behavior.
+- Keep the school demo simple: project1 owns Students CRUD, project2 owns Faculty CRUD, and project3 owns Courses CRUD.
+- Keep Unify read-only: it aggregates the three project data endpoints and preserves automatic health-card behavior.
 
 ## Working rules
 
 - Follow the approved tasks and contracts in `docs/adockerwsl-implementation-plan.md`.
 - Use `docker compose -f docker.yaml` in documented commands.
 - Do not use the Windows PostgreSQL server as an application dependency.
-- Do not add services, authentication, APIs between projects, or unrelated infrastructure without approval.
+- Do not add services, authentication, cross-database relations, or unrelated infrastructure without approval.
 - Never commit `.env`, credentials, Composer `vendor`, npm `node_modules`, or built Vite assets.
 - Do not run Docker cleanup commands that can affect unrelated projects.
 - Use test-driven development for application behavior and make the smallest task-scoped change.

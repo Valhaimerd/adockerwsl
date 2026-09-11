@@ -27,9 +27,40 @@ class ProjectStatusTest extends TestCase
         $this->getJson('/api/projects/status')
             ->assertOk()
             ->assertJsonPath('projects.0.id', 'project1')
+            ->assertJsonPath('projects.0.name', 'Students')
             ->assertJsonPath('projects.0.available', true)
             ->assertJsonPath('projects.1.available', true)
             ->assertJsonPath('projects.2.available', true);
+    }
+
+    public function test_school_overview_combines_the_three_project_databases(): void
+    {
+        Http::fake([
+            'http://project1/api/students' => Http::response(['data' => [['id' => 1, 'name' => 'Ada', 'email' => 'ada@example.test', 'program' => 'CS']]]),
+            'http://project2/api/faculty' => Http::response(['data' => [['id' => 1, 'name' => 'Grace', 'email' => 'grace@example.test', 'department' => 'Engineering']]]),
+            'http://project3/api/courses' => Http::response(['data' => [['id' => 1, 'code' => 'CS101', 'title' => 'Computing', 'instructor' => 'Grace']]]),
+        ]);
+
+        $this->getJson('/api/school/overview')
+            ->assertOk()
+            ->assertJsonPath('sections.0.title', 'Students')
+            ->assertJsonPath('sections.0.records.0.name', 'Ada')
+            ->assertJsonPath('sections.1.records.0.department', 'Engineering')
+            ->assertJsonPath('sections.2.records.0.code', 'CS101');
+    }
+
+    public function test_school_overview_marks_an_offline_source_unavailable(): void
+    {
+        Http::fake([
+            'http://project1/api/students' => Http::response(['data' => []]),
+            'http://project2/api/faculty' => Http::response([], 503),
+            'http://project3/api/courses' => Http::response(['data' => []]),
+        ]);
+
+        $this->getJson('/api/school/overview')
+            ->assertOk()
+            ->assertJsonPath('sections.1.available', false)
+            ->assertJsonPath('sections.1.records', []);
     }
 
     public function test_status_endpoint_marks_a_failed_project_unavailable(): void

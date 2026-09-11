@@ -10,6 +10,17 @@
 
 **Spec:** `docs/adockerwsl-implementation-plan.md#design-specification`
 
+## Approved scope amendment — School CRUD demonstration
+
+The original navigation-only scope was expanded after the first staging verification. The current demonstration keeps the same five containers and four isolated databases, with three intentionally small CRUD applications:
+
+- `project1`: Students (`name`, `email`, `program`)
+- `project2`: Faculty (`name`, `email`, `department`)
+- `project3`: Courses (`code`, `title`, `instructor`)
+- `unify`: a read-only overview fetched from the three project APIs beneath the availability cards
+
+There are no roles, authentication, cross-database foreign keys, or additional containers. Unify and its overview remain usable when a project is offline.
+
 ## Global Constraints
 
 - Use exactly one root Compose file named `docker.yaml`.
@@ -19,7 +30,7 @@
 - Windows pgAdmin connects to the containerized database through `localhost:5433`.
 - Laravel containers connect to PostgreSQL through the Compose service name `postgres` and container port `5432`.
 - Use one PostgreSQL server with four databases and four non-superuser application roles: `unify_db`, `project1_db`, `project2_db`, and `project3_db`.
-- Keep the sites navigation-only. Do not add project-to-project APIs, authentication, queues, Redis, WebSockets, or business workflows.
+- Keep CRUD to the three approved school record types. Do not add authentication, cross-database relations, queues, Redis, WebSockets, or additional workflows.
 - Every project must expose `GET /health`; the response must verify both Laravel and that project's database connection.
 - Unify must stay usable when any project container is stopped or unhealthy.
 - Unify must refresh project availability every five seconds and render unavailable cards grey and non-navigable.
@@ -60,13 +71,13 @@ The browser navigates to published `localhost` ports. Containers never use those
 
 ### Application behavior
 
-Each project page is a Vue single-page presentation mounted inside one Laravel Blade shell. The fixed page copy is:
+Each project page is a Vue single-page CRUD interface mounted inside one Laravel Blade shell:
 
-- `Project 1 — Future Work`
-- `Project 2 — Future Work`
-- `Project 3 — Future Work`
+- `Students — Student Directory`
+- `Faculty — Faculty Directory`
+- `Courses — Course Catalog`
 
-Each page contains one small inline SVG icon, its title, a short Docker demonstration sentence, and a link back to `http://localhost:8080`. No project stores or exchanges business data.
+Each page provides a compact add/edit form, records table, delete action, and link back to `http://localhost:8080`. Each application stores records only in its assigned database. Unify reads their list endpoints server-side and presents a read-only combined overview.
 
 Unify renders one card per project. Its browser requests `GET /api/projects/status` from Unify on initial load and every five seconds. The endpoint returns this stable JSON shape:
 
@@ -75,8 +86,8 @@ Unify renders one card per project. Its browser requests `GET /api/projects/stat
   "projects": [
     {
       "id": "project1",
-      "name": "Project 1",
-      "subtitle": "Future Work",
+      "name": "Students",
+      "subtitle": "Student Directory",
       "icon": "briefcase",
       "url": "http://localhost:8081",
       "available": true
@@ -324,7 +335,7 @@ Replace `AGENTS.md` with:
 - Preserve host ports 8080, 8081, 8082, 8083, and 5433.
 - Use Compose service names for internal traffic; never use fixed container IP addresses.
 - Keep four separate databases and application roles inside the single PostgreSQL container.
-- Keep Project 1–3 navigation-only and preserve Unify's automatic health-card behavior.
+- Keep the approved Students, Faculty, and Courses CRUD scope small and preserve Unify's automatic health-card behavior.
 
 ## Working rules
 
@@ -2052,7 +2063,7 @@ curl --silent http://localhost:8080/api/projects/status
 docker compose -f docker.yaml start project2
 ```
 
-Expected: Project 2 changes to unavailable after the backend timeout and returns to available after its health check recovers.
+Expected: Faculty changes to unavailable after the backend timeout and returns to available after its health check recovers. Its overview section follows the same outage and recovery state.
 
 - [x] **Step 8: Finish on the main branch**
 
@@ -2073,12 +2084,14 @@ Expected: containers stop without deleting PostgreSQL data, the working tree is 
 - [x] Docker Desktop displays exactly five containers in the `adockerwsl` Compose application.
 - [x] Unify loads at `http://localhost:8080` and shows exactly three cards.
 - [x] Project pages load at ports `8081`, `8082`, and `8083`.
+- [x] Students, Faculty, and Courses support create, list, update, and delete in their separate databases.
+- [x] Unify displays a read-only overview of all three project datasets.
 - [ ] Windows pgAdmin connects to the Docker PostgreSQL server at `localhost:5433`.
 - [x] PostgreSQL contains four databases owned by four distinct non-superuser roles.
 - [x] All four Laravel `/health` endpoints confirm their assigned database connection.
 - [x] Stopping any project greys only its card within five seconds.
 - [x] Restarting that project restores its card automatically.
-- [x] No project communicates with another project.
+- [x] Project applications do not communicate with each other; only Unify reads their public list endpoints.
 - [x] `docker compose -f docker.yaml config --quiet` succeeds.
 - [x] All four `php artisan test` suites pass in the disposable Composer test container.
 - [x] All four frontend production builds succeed.

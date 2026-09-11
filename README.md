@@ -1,6 +1,6 @@
 # ADockerWSL
 
-ADockerWSL is a small classroom demonstration of Docker Desktop and WSL 2. One Docker Compose project runs a Vue-powered Laravel portal named Unify, three independent Laravel project pages, and one PostgreSQL server containing four isolated application databases. Unify checks the other containers every five seconds, so stopping one project greys out only that project's card.
+ADockerWSL is a small classroom demonstration of Docker Desktop and WSL 2. One Docker Compose project runs a Vue-powered Laravel portal named Unify, three independent school CRUD applications, and one PostgreSQL server containing four isolated application databases. Unify checks the other containers and combines their read-only data every five seconds, so stopping one project greys out only that project's card and overview.
 
 ## Architecture
 
@@ -12,7 +12,7 @@ ADockerWSL is a small classroom demonstration of Docker Desktop and WSL 2. One D
 | `project3` | `adockerwsl-project3` | `http://localhost:8083` | `postgres` | `project3_db` |
 | `postgres` | `postgres:17-bookworm` | `localhost:5433` | None | Hosts all four databases |
 
-Browser traffic uses the published `localhost` ports. Container traffic uses Compose DNS: Unify calls project URLs such as `http://project1/health`, and every Laravel container connects to `postgres:5432`.
+Browser traffic uses the published `localhost` ports. Container traffic uses Compose DNS: Unify calls project URLs such as `http://project1/health` and `http://project1/api/students`, and every Laravel container connects to `postgres:5432`.
 
 ## Prerequisites
 
@@ -59,9 +59,9 @@ The committed `.env.example` contains demonstration-only database passwords. The
 | Component | Address |
 |---|---|
 | Unify | `http://localhost:8080` |
-| Project 1 | `http://localhost:8081` |
-| Project 2 | `http://localhost:8082` |
-| Project 3 | `http://localhost:8083` |
+| Students | `http://localhost:8081` |
+| Faculty | `http://localhost:8082` |
+| Courses | `http://localhost:8083` |
 | PostgreSQL from Windows/WSL | `localhost:5433` |
 
 For pgAdmin on Windows, register a server with:
@@ -84,7 +84,7 @@ docker compose -f docker.yaml ps
 docker compose -f docker.yaml logs -f
 docker compose -f docker.yaml logs -f unify
 
-# Make Project 2 unavailable, then recover it
+# Make Faculty unavailable, then recover it
 docker compose -f docker.yaml stop project2
 docker compose -f docker.yaml start project2
 

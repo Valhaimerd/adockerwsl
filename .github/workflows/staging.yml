@@ -72,6 +72,8 @@ jobs:
         run: |
           curl --fail --silent http://localhost:8080/api/projects/status > statuses.json
           python3 -c "import json; data=json.load(open('statuses.json')); assert len(data['projects']) == 3; assert all(p['available'] for p in data['projects'])"
+          curl --fail --silent http://localhost:8080/api/school/overview > overview.json
+          python3 -c "import json; data=json.load(open('overview.json')); assert [s['title'] for s in data['sections']] == ['Students', 'Faculty', 'Courses']; assert all(s['available'] for s in data['sections'])"
 
       - name: Show diagnostics on failure
         if: failure()

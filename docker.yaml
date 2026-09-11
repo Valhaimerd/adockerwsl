@@ -37,6 +37,9 @@ services:
       PROJECT1_HEALTH_URL: http://project1/health
       PROJECT2_HEALTH_URL: http://project2/health
       PROJECT3_HEALTH_URL: http://project3/health
+      PROJECT1_DATA_URL: http://project1/api/students
+      PROJECT2_DATA_URL: http://project2/api/faculty
+      PROJECT3_DATA_URL: http://project3/api/courses
       PROJECT1_PUBLIC_URL: http://localhost:8081
       PROJECT2_PUBLIC_URL: http://localhost:8082
       PROJECT3_PUBLIC_URL: http://localhost:8083
@@ -50,7 +53,7 @@ services:
       context: ./project1
     environment:
       <<: *laravel-environment
-      APP_NAME: Project 1
+      APP_NAME: Students
       APP_KEY: ${PROJECT1_APP_KEY}
       APP_URL: http://localhost:8081
       UNIFY_PUBLIC_URL: http://localhost:8080
@@ -67,7 +70,7 @@ services:
       context: ./project2
     environment:
       <<: *laravel-environment
-      APP_NAME: Project 2
+      APP_NAME: Faculty
       APP_KEY: ${PROJECT2_APP_KEY}
       APP_URL: http://localhost:8082
       UNIFY_PUBLIC_URL: http://localhost:8080
@@ -84,7 +87,7 @@ services:
       context: ./project3
     environment:
       <<: *laravel-environment
-      APP_NAME: Project 3
+      APP_NAME: Courses
       APP_KEY: ${PROJECT3_APP_KEY}
       APP_URL: http://localhost:8083
       UNIFY_PUBLIC_URL: http://localhost:8080

@@ -2,8 +2,8 @@
 
 return [
     'id' => 'project1',
-    'name' => 'Project 1',
-    'subtitle' => 'Future Work',
-    'description' => 'A minimal Laravel application running in its own Docker container.',
+    'name' => 'Students',
+    'subtitle' => 'Student Directory',
+    'description' => 'Create and manage student records stored in the project1 database.',
     'unify_url' => env('UNIFY_PUBLIC_URL', 'http://localhost:8080'),
 ];
