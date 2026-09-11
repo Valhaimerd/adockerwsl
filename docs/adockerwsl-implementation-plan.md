@@ -549,7 +549,7 @@ Expected: source files and lockfiles are committed; ignored dependency and gener
 - Consumes: The Laravel/Vue foundations from Task 2 and a PostgreSQL connection named `pgsql`.
 - Produces: `GET /` HTML shells and `GET /health` JSON endpoints used by Unify and Compose.
 
-- [ ] **Step 1: Write Project 1's failing feature tests**
+- [x] **Step 1: Write Project 1's failing feature tests**
 
 Create `project1/tests/Feature/ProjectPageTest.php`:
 
@@ -606,7 +606,7 @@ Create all three test files from the shown test contract using these exact value
 | `project2/tests/Feature/ProjectPageTest.php` | `Project 2` | `project2` |
 | `project3/tests/Feature/ProjectPageTest.php` | `Project 3` | `project3` |
 
-- [ ] **Step 2: Run the focused tests to verify they fail**
+- [x] **Step 2: Run the focused tests to verify they fail**
 
 Run:
 
@@ -623,7 +623,7 @@ done
 
 Expected: failures because the project configuration, page, and health contracts do not exist.
 
-- [ ] **Step 3: Create the exact per-project configuration**
+- [x] **Step 3: Create the exact per-project configuration**
 
 Create `project1/config/project.php`:
 
@@ -641,7 +641,7 @@ return [
 
 Create `project2/config/project.php` and `project3/config/project.php` with IDs and names changed to `project2` / `Project 2` and `project3` / `Project 3`; keep the other values identical.
 
-- [ ] **Step 4: Implement the page and database-aware health routes in every project**
+- [x] **Step 4: Implement the page and database-aware health routes in every project**
 
 Replace `project1/routes/web.php` with:
 
@@ -674,7 +674,7 @@ Route::get('/health', function () {
 
 Use this exact route file in `project2` and `project3` as well; the service identity comes from each application's configuration.
 
-- [ ] **Step 5: Create the Blade shell in every project**
+- [x] **Step 5: Create the Blade shell in every project**
 
 Create the same `resources/views/app.blade.php` in all three projects:
 
@@ -697,7 +697,7 @@ Create the same `resources/views/app.blade.php` in all three projects:
 </html>
 ```
 
-- [ ] **Step 6: Create the minimal Vue project page in every project**
+- [x] **Step 6: Create the minimal Vue project page in every project**
 
 Create the same `resources/js/components/App.vue` in all three projects:
 
@@ -733,7 +733,7 @@ const project = {
 </template>
 ```
 
-- [ ] **Step 7: Run application and frontend verification**
+- [x] **Step 7: Run application and frontend verification**
 
 Run:
 
@@ -751,7 +751,7 @@ done
 
 Expected: all nine feature assertions pass across the three projects and all three Vite builds exit successfully.
 
-- [ ] **Step 8: Commit the three presentation sites**
+- [x] **Step 8: Commit the three presentation sites**
 
 Run:
 
