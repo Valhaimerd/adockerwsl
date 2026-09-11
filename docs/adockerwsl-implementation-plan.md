@@ -1790,7 +1790,7 @@ git commit -m "docs: add Docker classroom runbook"
 - Consumes: Four Docker build contexts and the verified `docker.yaml`.
 - Produces: Public `:staging` and immutable `:sha-<commit>` GHCR image tags after verification succeeds on the `staging` branch.
 
-- [ ] **Step 1: Create the staging workflow**
+- [x] **Step 1: Create the staging workflow**
 
 Create `.github/workflows/staging.yml`:
 
@@ -1825,6 +1825,23 @@ jobs:
       - name: Validate Compose
         run: docker compose -f docker.yaml config --quiet
 
+      - name: Install dependencies and run Laravel tests
+        run: |
+          for app in unify project1 project2 project3; do
+            docker run --rm \
+              --user "$(id -u):$(id -g)" \
+              --env COMPOSER_CACHE_DIR=/tmp/composer-cache \
+              --volume "$PWD/$app:/app" \
+              --workdir /app \
+              composer:2 install --no-interaction --no-progress
+            docker run --rm \
+              --user "$(id -u):$(id -g)" \
+              --volume "$PWD/$app:/app" \
+              --workdir /app \
+              --entrypoint php \
+              composer:2 artisan test
+          done
+
       - name: Build application images
         run: docker compose -f docker.yaml build
 
@@ -1833,7 +1850,7 @@ jobs:
 
       - name: Wait for all services
         run: |
-          for attempt in $(seq 1 60); do
+          for _ in $(seq 1 60); do
             if [ "$(docker compose -f docker.yaml ps --status running --services | wc -l)" -eq 5 ] \
               && curl --fail --silent http://localhost:8080/health >/dev/null \
               && curl --fail --silent http://localhost:8081/health >/dev/null \
@@ -1846,13 +1863,6 @@ jobs:
           docker compose -f docker.yaml ps
           docker compose -f docker.yaml logs
           exit 1
-
-      - name: Run Laravel tests
-        run: |
-          docker compose -f docker.yaml exec -T unify php artisan test
-          docker compose -f docker.yaml exec -T project1 php artisan test
-          docker compose -f docker.yaml exec -T project2 php artisan test
-          docker compose -f docker.yaml exec -T project3 php artisan test
 
       - name: Verify Unify aggregation
         run: |
@@ -1914,7 +1924,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
 ```
 
-- [ ] **Step 2: Review workflow boundaries**
+- [x] **Step 2: Review workflow boundaries**
 
 Confirm:
 
@@ -1925,7 +1935,7 @@ Confirm:
 - CI uses `down --volumes` only on its disposable GitHub runner.
 - Image source labels link all four packages to the public repository.
 
-- [ ] **Step 3: Validate YAML and repository formatting locally**
+- [x] **Step 3: Validate YAML and repository formatting locally**
 
 Run:
 
@@ -1937,7 +1947,7 @@ git status --short
 
 Expected: Compose validation succeeds, the diff is clean, and only the workflow is untracked or modified.
 
-- [ ] **Step 4: Commit the workflow**
+- [x] **Step 4: Commit the workflow**
 
 Run:
 
@@ -2069,7 +2079,7 @@ Expected: containers stop without deleting PostgreSQL data, the working tree is 
 - [ ] Restarting that project restores its card automatically.
 - [ ] No project communicates with another project.
 - [ ] `docker compose -f docker.yaml config --quiet` succeeds.
-- [ ] All four `php artisan test` suites pass inside their built images.
+- [ ] All four `php artisan test` suites pass in the disposable Composer test container.
 - [ ] All four frontend production builds succeed.
 - [ ] The GitHub repository is public and named `adockerwsl`.
 - [ ] The Staging workflow verifies the stack before publishing images.
