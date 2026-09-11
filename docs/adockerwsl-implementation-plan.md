@@ -1836,6 +1836,7 @@ jobs:
               composer:2 install --no-interaction --no-progress
             docker run --rm \
               --user "$(id -u):$(id -g)" \
+              --env APP_KEY=base64:bG9jYWwtY2ktdW5pZnktYXBwLWtleS0zMmJ5dGVzISE= \
               --volume "$PWD/$app:/app" \
               --workdir /app \
               --entrypoint php \
