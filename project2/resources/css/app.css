@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+html {
+    min-height: 100%;
+    background: oklch(97% 0.014 254.604);
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+}

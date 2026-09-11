@@ -24,6 +24,7 @@
 - Unify must stay usable when any project container is stopped or unhealthy.
 - Unify must refresh project availability every five seconds and render unavailable cards grey and non-navigable.
 - Use PHP 8.4 inside application images. Do not depend on the currently broken WSL `laravel` global command.
+- Run pre-image Artisan commands through `composer:2`; WSL PHP 8.3.6 cannot execute the generated lockfiles, whose Symfony 8.1 packages require PHP 8.4.1 or newer.
 - Use Laravel 13, Vue 3, Vite, Tailwind CSS, and daisyUI in all four applications.
 - Do not run Docker cleanup commands that can affect unrelated containers, images, networks, or volumes.
 - Publish the GitHub repository as public under the name `adockerwsl`.
@@ -337,7 +338,7 @@ Replace `AGENTS.md` with:
 
 ## Verification
 
-- Run `php artisan test` after changing Laravel/PHP behavior.
+- Run Laravel tests through Docker because WSL PHP 8.3 cannot execute the PHP 8.4.1+ lockfiles. Before application images exist, use the `composer:2` commands in the implementation plan; afterward use its exact `docker compose exec` commands.
 - Run `npm run build` after changing Vue, Vite, Tailwind, or daisyUI files.
 - Run `docker compose -f docker.yaml config` after changing Compose configuration.
 - For integration changes, verify every `/health` endpoint and Unify's `/api/projects/status` endpoint.
@@ -393,7 +394,7 @@ Expected: Git creates the `main` branch and records only documentation and repos
 - Consumes: Four empty application paths from Task 1.
 - Produces: Four Laravel 13 codebases with identical Vue 3, Tailwind, daisyUI, and Vite foundations.
 
-- [ ] **Step 1: Scaffold Laravel without using the broken global installer**
+- [x] **Step 1: Scaffold Laravel without using the broken global installer**
 
 Run from the repository root:
 
@@ -409,20 +410,25 @@ done
 
 Expected: all four directories contain `artisan`, `composer.json`, and a Laravel 13 `composer.lock`.
 
-- [ ] **Step 2: Verify framework versions before customization**
+- [x] **Step 2: Verify framework versions before customization**
 
 Run:
 
 ```bash
 for app in unify project1 project2 project3; do
   printf '%s: ' "$app"
-  php "$app/artisan" --version
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    --volume "$PWD/$app:/app" \
+    --workdir /app \
+    --entrypoint php \
+    composer:2 artisan --version
 done
 ```
 
 Expected: every line reports Laravel Framework 13.x. The command uses each project's dependencies, not the global `laravel` executable.
 
-- [ ] **Step 3: Install the common frontend dependencies**
+- [x] **Step 3: Install the common frontend dependencies**
 
 Run:
 
@@ -435,7 +441,7 @@ done
 
 Expected: each `package.json` declares Vue and the three styling/build dependencies, and each application has a lockfile.
 
-- [ ] **Step 4: Configure Vite identically in all four applications**
+- [x] **Step 4: Configure Vite identically in all four applications**
 
 Replace each application's `vite.config.js` with:
 
@@ -457,7 +463,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 5: Configure Tailwind and daisyUI identically in all four applications**
+- [x] **Step 5: Configure Tailwind and daisyUI identically in all four applications**
 
 Replace each application's `resources/css/app.css` with:
 
@@ -496,20 +502,25 @@ Create `resources/js/components/App.vue` in each application with this buildable
 </template>
 ```
 
-- [ ] **Step 6: Verify all four framework and frontend baselines**
+- [x] **Step 6: Verify all four framework and frontend baselines**
 
 Run:
 
 ```bash
 for app in unify project1 project2 project3; do
-  php "$app/artisan" test
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    --volume "$PWD/$app:/app" \
+    --workdir /app \
+    --entrypoint php \
+    composer:2 artisan test
   npm --prefix "$app" run build
 done
 ```
 
 Expected: every generated Laravel suite passes and every Vite build exits successfully.
 
-- [ ] **Step 7: Commit the consistent application skeletons**
+- [x] **Step 7: Commit the consistent application skeletons**
 
 Run:
 
@@ -601,7 +612,12 @@ Run:
 
 ```bash
 for app in project1 project2 project3; do
-  php "$app/artisan" test --filter=ProjectPageTest
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    --volume "$PWD/$app:/app" \
+    --workdir /app \
+    --entrypoint php \
+    composer:2 artisan test --filter=ProjectPageTest
 done
 ```
 
@@ -723,7 +739,12 @@ Run:
 
 ```bash
 for app in project1 project2 project3; do
-  php "$app/artisan" test --filter=ProjectPageTest
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    --volume "$PWD/$app:/app" \
+    --workdir /app \
+    --entrypoint php \
+    composer:2 artisan test --filter=ProjectPageTest
   npm --prefix "$app" run build
 done
 ```
@@ -841,7 +862,12 @@ class ProjectStatusTest extends TestCase
 Run:
 
 ```bash
-php unify/artisan test --filter=ProjectStatusTest
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  --volume "$PWD/unify:/app" \
+  --workdir /app \
+  --entrypoint php \
+  composer:2 artisan test --filter=ProjectStatusTest
 ```
 
 Expected: failures because the service, controller, routes, and dashboard do not exist.
@@ -1075,7 +1101,12 @@ onBeforeUnmount(() => window.clearInterval(timer));
 Run:
 
 ```bash
-php unify/artisan test --filter=ProjectStatusTest
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  --volume "$PWD/unify:/app" \
+  --workdir /app \
+  --entrypoint php \
+  composer:2 artisan test --filter=ProjectStatusTest
 npm --prefix unify run build
 ```
 

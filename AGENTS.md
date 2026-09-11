@@ -33,7 +33,7 @@
 
 ## Verification
 
-- Run `php artisan test` after changing Laravel/PHP behavior.
+- Run Laravel tests through Docker because WSL PHP 8.3 cannot execute the PHP 8.4.1+ lockfiles. Before application images exist, use the `composer:2` commands in the implementation plan; afterward use its exact `docker compose exec` commands.
 - Run `npm run build` after changing Vue, Vite, Tailwind, or daisyUI files.
 - Run `docker compose -f docker.yaml config` after changing Compose configuration.
 - For integration changes, verify every `/health` endpoint and Unify's `/api/projects/status` endpoint.
