@@ -254,7 +254,7 @@ Laravel-generated framework files remain inside each application but are omitted
 - Consumes: The approved design specification in this document.
 - Produces: A clean repository root, a safe ignore policy, and project-specific agent guidance used by every later task.
 
-- [ ] **Step 1: Stop only the existing Compose project**
+- [x] **Step 1: Stop only the existing Compose project**
 
 Run:
 
@@ -264,7 +264,7 @@ docker compose -f docker.yaml down
 
 Expected: the three `docker-http-chain-*` containers and their Compose network are removed. Do not add `--rmi`, `--volumes`, or run a global Docker prune.
 
-- [ ] **Step 2: Remove the three Python application directories and obsolete root configuration**
+- [x] **Step 2: Remove the three Python application directories and obsolete root configuration**
 
 Resolve and verify the exact targets first:
 
@@ -275,7 +275,7 @@ find project1 project2 project3 -maxdepth 2 -type f -print | sort
 
 Expected working directory: `/home/valhaimerd/projects`. Delete only `project1`, `project2`, `project3`, the old `docker.yaml`, and the old root `.env`; preserve `docs/adockerwsl-implementation-plan.md`.
 
-- [ ] **Step 3: Create the repository ignore policy**
+- [x] **Step 3: Create the repository ignore policy**
 
 Create `.gitignore` with:
 
@@ -303,7 +303,7 @@ Create `.gitignore` with:
 Thumbs.db
 ```
 
-- [ ] **Step 4: Rewrite repository guidance**
+- [x] **Step 4: Rewrite repository guidance**
 
 Replace `AGENTS.md` with:
 
@@ -344,7 +344,7 @@ Replace `AGENTS.md` with:
 - Before completion, stop one project service, verify its Unify status becomes unavailable, restart it, and verify recovery.
 ```
 
-- [ ] **Step 5: Verify cleanup boundaries and guidance**
+- [x] **Step 5: Verify cleanup boundaries and guidance**
 
 Run:
 
@@ -359,7 +359,7 @@ rg -n "docker-http-chain|python app.py" AGENTS.md .gitignore || true
 
 Expected: the first five checks succeed and the search prints no obsolete implementation references outside this historical plan.
 
-- [ ] **Step 6: Initialize Git and commit the clean planning baseline**
+- [x] **Step 6: Initialize Git and commit the clean planning baseline**
 
 Run:
 
