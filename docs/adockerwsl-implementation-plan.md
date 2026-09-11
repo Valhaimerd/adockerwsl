@@ -21,6 +21,10 @@ The original navigation-only scope was expanded after the first staging verifica
 
 There are no roles, authentication, cross-database foreign keys, or additional containers. Unify and its overview remain usable when a project is offline.
 
+### Optional Kali staging host
+
+The WSL checkout remains the development environment. A separate Kali VMware guest may serve as the staged deployment host from `/opt/adockerwsl`, using the same `docker.yaml`, VM-specific public URLs, public GHCR images, and its own PostgreSQL volume. The guarded workflow deployment job runs only after verification and publishing succeed and only when `KALI_DEPLOY_ENABLED=true`. Host preparation and security boundaries are defined in `docs/kali-vm-staging-handoff.md`.
+
 ## Global Constraints
 
 - Use exactly one root Compose file named `docker.yaml`.

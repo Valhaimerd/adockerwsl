@@ -109,3 +109,9 @@ docker compose -f docker.yaml up --no-build -d
 The local `.env` still supplies application keys and database passwords; `IMAGE_PREFIX` and `IMAGE_TAG` select the published images.
 
 For the live sequence, see the [classroom presentation runbook](docs/presentation-runbook.md).
+
+## Optional Kali staging host
+
+The same `docker.yaml` can deploy the published staging images to an isolated Kali VMware guest. Public browser URLs are configurable so local WSL continues using `localhost` while the VM uses its own address. Automatic deployment is disabled until the Kali runner is explicitly enabled.
+
+Follow the [Kali VM staging host handoff](docs/kali-vm-staging-handoff.md) inside the VM. The handoff covers the dedicated `/opt/adockerwsl` checkout, private environment, VMware networking, isolated self-hosted runner, guarded deployment, and acceptance checks.

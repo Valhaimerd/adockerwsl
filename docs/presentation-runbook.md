@@ -50,7 +50,9 @@ docker compose -f docker.yaml start project2
 
 - Open the successful GitHub Actions Staging workflow.
 - Show the four public GHCR packages.
-- Stop the local stack, pull the staging tags, and start with `--no-build` using the commands in the README.
+- If the optional Kali host is configured, show that the final workflow job automatically updated its five containers after publishing succeeded.
+- Otherwise, stop the local stack, pull the staging tags, and start with `--no-build` using the commands in the README.
+- Emphasize that a failed verification or publish job never reaches the Kali deployment job.
 
 ## 7. Finish cleanly — 1 minute
 

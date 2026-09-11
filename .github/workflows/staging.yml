@@ -128,3 +128,22 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha,scope=${{ matrix.app }}
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+
+  deploy:
+    name: Deploy to Kali demonstration host
+    needs: publish
+    if: ${{ vars.KALI_DEPLOY_ENABLED == 'true' }}
+    runs-on: [self-hosted, Linux, X64, adockerwsl-kali]
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Update the dedicated deployment checkout
+        run: |
+          git -C /opt/adockerwsl fetch origin staging
+          git -C /opt/adockerwsl checkout staging
+          git -C /opt/adockerwsl merge --ff-only origin/staging
+
+      - name: Pull and deploy verified staging images
+        run: /opt/adockerwsl/scripts/deploy-staging.sh

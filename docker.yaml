@@ -30,7 +30,7 @@ services:
       <<: *laravel-environment
       APP_NAME: Unify
       APP_KEY: ${UNIFY_APP_KEY}
-      APP_URL: http://localhost:8080
+      APP_URL: ${UNIFY_PUBLIC_URL:-http://localhost:8080}
       DB_DATABASE: unify_db
       DB_USERNAME: unify_app
       DB_PASSWORD: ${UNIFY_DB_PASSWORD}
@@ -40,9 +40,9 @@ services:
       PROJECT1_DATA_URL: http://project1/api/students
       PROJECT2_DATA_URL: http://project2/api/faculty
       PROJECT3_DATA_URL: http://project3/api/courses
-      PROJECT1_PUBLIC_URL: http://localhost:8081
-      PROJECT2_PUBLIC_URL: http://localhost:8082
-      PROJECT3_PUBLIC_URL: http://localhost:8083
+      PROJECT1_PUBLIC_URL: ${PROJECT1_PUBLIC_URL:-http://localhost:8081}
+      PROJECT2_PUBLIC_URL: ${PROJECT2_PUBLIC_URL:-http://localhost:8082}
+      PROJECT3_PUBLIC_URL: ${PROJECT3_PUBLIC_URL:-http://localhost:8083}
     ports:
       - "8080:80"
 
@@ -55,8 +55,8 @@ services:
       <<: *laravel-environment
       APP_NAME: Students
       APP_KEY: ${PROJECT1_APP_KEY}
-      APP_URL: http://localhost:8081
-      UNIFY_PUBLIC_URL: http://localhost:8080
+      APP_URL: ${PROJECT1_PUBLIC_URL:-http://localhost:8081}
+      UNIFY_PUBLIC_URL: ${UNIFY_PUBLIC_URL:-http://localhost:8080}
       DB_DATABASE: project1_db
       DB_USERNAME: project1_app
       DB_PASSWORD: ${PROJECT1_DB_PASSWORD}
@@ -72,8 +72,8 @@ services:
       <<: *laravel-environment
       APP_NAME: Faculty
       APP_KEY: ${PROJECT2_APP_KEY}
-      APP_URL: http://localhost:8082
-      UNIFY_PUBLIC_URL: http://localhost:8080
+      APP_URL: ${PROJECT2_PUBLIC_URL:-http://localhost:8082}
+      UNIFY_PUBLIC_URL: ${UNIFY_PUBLIC_URL:-http://localhost:8080}
       DB_DATABASE: project2_db
       DB_USERNAME: project2_app
       DB_PASSWORD: ${PROJECT2_DB_PASSWORD}
@@ -89,8 +89,8 @@ services:
       <<: *laravel-environment
       APP_NAME: Courses
       APP_KEY: ${PROJECT3_APP_KEY}
-      APP_URL: http://localhost:8083
-      UNIFY_PUBLIC_URL: http://localhost:8080
+      APP_URL: ${PROJECT3_PUBLIC_URL:-http://localhost:8083}
+      UNIFY_PUBLIC_URL: ${UNIFY_PUBLIC_URL:-http://localhost:8080}
       DB_DATABASE: project3_db
       DB_USERNAME: project3_app
       DB_PASSWORD: ${PROJECT3_DB_PASSWORD}

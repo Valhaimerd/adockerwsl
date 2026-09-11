@@ -15,6 +15,7 @@
 - Keep four separate databases and application roles inside the single PostgreSQL container.
 - Keep the school demo simple: project1 owns Students CRUD, project2 owns Faculty CRUD, and project3 owns Courses CRUD.
 - Keep Unify read-only: it aggregates the three project data endpoints and preserves automatic health-card behavior.
+- Keep WSL development and the optional Kali staging host separate; staging must pull GHCR images and use `--no-build`.
 
 ## Working rules
 
@@ -24,6 +25,7 @@
 - Do not add services, authentication, cross-database relations, or unrelated infrastructure without approval.
 - Never commit `.env`, credentials, Composer `vendor`, npm `node_modules`, or built Vite assets.
 - Do not run Docker cleanup commands that can affect unrelated projects.
+- Keep automatic Kali deployment disabled unless `KALI_DEPLOY_ENABLED=true` and the labeled isolated runner is ready.
 - Use test-driven development for application behavior and make the smallest task-scoped change.
 
 ## Minimal skill set
