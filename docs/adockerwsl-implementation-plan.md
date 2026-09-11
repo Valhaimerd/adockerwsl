@@ -1682,7 +1682,7 @@ If there were no corrections, do not create an empty commit.
 - Consumes: The verified local commands and endpoints from Task 7.
 - Produces: A reproducible installation guide and a short live-presentation sequence.
 
-- [ ] **Step 1: Write the README with exact audience-facing sections**
+- [x] **Step 1: Write the README with exact audience-facing sections**
 
 Create `README.md` containing:
 
@@ -1697,7 +1697,7 @@ Create `README.md` containing:
 9. Staging-image pull commands from the design specification.
 10. A link to `docs/presentation-runbook.md`.
 
-- [ ] **Step 2: Write the timed classroom runbook**
+- [x] **Step 2: Write the timed classroom runbook**
 
 Create `docs/presentation-runbook.md` with this sequence:
 
@@ -1759,7 +1759,7 @@ docker compose -f docker.yaml down
 - Explain that the named PostgreSQL volume remains for the next run.
 ```
 
-- [ ] **Step 3: Verify every documented command and link**
+- [x] **Step 3: Verify every documented command and link**
 
 Run the non-destructive commands from both documents, confirm every local link matches the Compose ports, and run:
 
@@ -1770,7 +1770,7 @@ git diff --check
 
 Expected: all six networking values appear where relevant and no formatting errors are reported.
 
-- [ ] **Step 4: Commit documentation**
+- [x] **Step 4: Commit documentation**
 
 Run:
 
