@@ -1532,7 +1532,7 @@ git commit -m "feat: orchestrate Laravel apps and PostgreSQL"
 - Consumes: The five-service Compose topology.
 - Produces: Evidence that pages, database isolation, health aggregation, stopping, and recovery all work from WSL and Docker Desktop.
 
-- [ ] **Step 1: Build and start the entire application**
+- [x] **Step 1: Build and start the entire application**
 
 Run:
 
@@ -1543,7 +1543,7 @@ docker compose -f docker.yaml ps
 
 Expected: all five services reach `Up (healthy)` and Docker Desktop lists them under the `adockerwsl` Compose application.
 
-- [ ] **Step 2: Verify all public pages and local health endpoints**
+- [x] **Step 2: Verify all public pages and local health endpoints**
 
 Run:
 
@@ -1561,7 +1561,7 @@ curl --fail --silent http://localhost:8080/api/projects/status
 
 Expected: pages return HTML, health responses report their exact service names and `database: connected`, and all three status records have `available: true`.
 
-- [ ] **Step 3: Verify four databases and owners from inside PostgreSQL**
+- [x] **Step 3: Verify four databases and owners from inside PostgreSQL**
 
 Run:
 
@@ -1580,7 +1580,7 @@ project3_db:project3_app
 unify_db:unify_app
 ```
 
-- [ ] **Step 4: Prove automatic Unify degradation when a project stops**
+- [x] **Step 4: Prove automatic Unify degradation when a project stops**
 
 Run:
 
@@ -1606,7 +1606,7 @@ PY
 
 Expected: the script prints `project2 unavailable: verified`. In a browser, its card becomes grey and disabled within one five-second polling interval.
 
-- [ ] **Step 5: Prove automatic recovery**
+- [x] **Step 5: Prove automatic recovery**
 
 Run:
 
@@ -1632,20 +1632,24 @@ PY
 
 Expected: the script prints `project2 available: verified`, and the browser card returns to its active state.
 
-- [ ] **Step 6: Run all application test suites inside their images**
+- [x] **Step 6: Run all application test suites in the disposable Composer container**
 
 Run:
 
 ```bash
-docker compose -f docker.yaml exec -T unify php artisan test
-docker compose -f docker.yaml exec -T project1 php artisan test
-docker compose -f docker.yaml exec -T project2 php artisan test
-docker compose -f docker.yaml exec -T project3 php artisan test
+for app in unify project1 project2 project3; do
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    --volume "$PWD/$app:/app" \
+    --workdir /app \
+    --entrypoint php \
+    composer:2 artisan test
+done
 ```
 
-Expected: all Laravel tests pass.
+Expected: all Laravel tests pass. The disposable test container uses each application's development dependencies; the production images remain smaller and do not include PHPUnit.
 
-- [ ] **Step 7: Stop cleanly while preserving database data**
+- [x] **Step 7: Stop cleanly while preserving database data**
 
 Run:
 
@@ -1655,7 +1659,7 @@ docker compose -f docker.yaml down
 
 Expected: the five containers and project network stop; the `adockerwsl_postgres_data` named volume remains.
 
-- [ ] **Step 8: Commit any verified corrections**
+- [x] **Step 8: Commit any verified corrections**
 
 If verification required changes, run the affected focused tests again, then:
 
