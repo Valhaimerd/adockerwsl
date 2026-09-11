@@ -1968,9 +1968,9 @@ git commit -m "ci: publish verified staging images"
 - Consumes: A complete local `main` history and `.github/workflows/staging.yml`.
 - Produces: The public `adockerwsl` GitHub repository, a `staging` branch, four public GHCR packages, and a proven local image-pull workflow.
 
-- [ ] **Step 1: Install and authenticate GitHub CLI in WSL at the user checkpoint**
+- [x] **Step 1: Install and authenticate GitHub CLI in WSL at the user checkpoint**
 
-The WSL environment currently reports `gh: not found`. Follow GitHub CLI's official Debian/Ubuntu installation instructions, then run:
+GitHub CLI 2.100.0 was installed for the WSL user in `~/.local/bin` because system-wide installation required a sudo password. The official archive checksum was verified, Bash PATH configuration was updated, and browser-device authentication was completed with:
 
 ```bash
 gh auth login --web --git-protocol https
@@ -1979,7 +1979,7 @@ gh auth status
 
 Expected: `gh auth status` reports an authenticated GitHub account. Browser authentication is completed by the user; credentials are never written into this repository.
 
-- [ ] **Step 2: Create and push the public repository**
+- [x] **Step 2: Create and push the public repository**
 
 Run:
 
@@ -1990,18 +1990,17 @@ git remote -v
 
 Expected: `origin` points to the authenticated account's public `adockerwsl` repository and `main` is pushed.
 
-- [ ] **Step 3: Create and push the staging branch**
+- [x] **Step 3: Create and push the staging branch**
 
 Run:
 
 ```bash
-git switch -c staging
-git push --set-upstream origin staging
+git push origin main:refs/heads/staging
 ```
 
-Expected: the Staging workflow starts in GitHub Actions.
+Expected: the remote staging branch is created from the verified `main` commit and the Staging workflow starts in GitHub Actions. The local working branch remains `main`, as requested for this presentation project.
 
-- [ ] **Step 4: Wait for and inspect the workflow**
+- [x] **Step 4: Wait for and inspect the workflow**
 
 Run:
 
@@ -2012,22 +2011,23 @@ gh run watch --exit-status
 
 Expected: both `verify` and all four `publish` matrix jobs complete successfully.
 
-- [ ] **Step 5: Confirm anonymous staging pulls**
+- [x] **Step 5: Confirm anonymous staging pulls**
 
-First make each GHCR package public in GitHub's package settings if it did not inherit public visibility. Then log Docker out of GHCR for the anonymous-pull check and derive the namespace from `origin`:
+First make each GHCR package public in GitHub's package settings if it did not inherit public visibility. Use a temporary empty Docker configuration for the anonymous-pull check so existing Docker credentials are not changed:
 
 ```bash
-docker logout ghcr.io || true
+anonymous_docker_config="$(mktemp -d)"
 GITHUB_OWNER="$(gh api user --jq .login | tr '[:upper:]' '[:lower:]')"
-docker pull "ghcr.io/${GITHUB_OWNER}/adockerwsl-unify:staging"
-docker pull "ghcr.io/${GITHUB_OWNER}/adockerwsl-project1:staging"
-docker pull "ghcr.io/${GITHUB_OWNER}/adockerwsl-project2:staging"
-docker pull "ghcr.io/${GITHUB_OWNER}/adockerwsl-project3:staging"
+DOCKER_CONFIG="$anonymous_docker_config" docker pull "ghcr.io/${GITHUB_OWNER}/adockerwsl-unify:staging"
+DOCKER_CONFIG="$anonymous_docker_config" docker pull "ghcr.io/${GITHUB_OWNER}/adockerwsl-project1:staging"
+DOCKER_CONFIG="$anonymous_docker_config" docker pull "ghcr.io/${GITHUB_OWNER}/adockerwsl-project2:staging"
+DOCKER_CONFIG="$anonymous_docker_config" docker pull "ghcr.io/${GITHUB_OWNER}/adockerwsl-project3:staging"
+find "$anonymous_docker_config" -depth -delete
 ```
 
 Expected: all four pulls succeed without registry authentication.
 
-- [ ] **Step 6: Run only the published application images locally**
+- [x] **Step 6: Run only the published application images locally**
 
 Run:
 
@@ -2042,7 +2042,7 @@ curl --fail --silent http://localhost:8080/api/projects/status
 
 Expected: Compose starts the four pulled GHCR images plus the official PostgreSQL image, all services become healthy, and all project statuses are available.
 
-- [ ] **Step 7: Repeat failure recovery against staging images**
+- [x] **Step 7: Repeat failure recovery against staging images**
 
 Run:
 
@@ -2054,13 +2054,13 @@ docker compose -f docker.yaml start project2
 
 Expected: Project 2 changes to unavailable after the backend timeout and returns to available after its health check recovers.
 
-- [ ] **Step 8: Finish on the main branch**
+- [x] **Step 8: Finish on the main branch**
 
 Run:
 
 ```bash
 docker compose -f docker.yaml down
-git switch main
+git branch --show-current
 git status --short --branch
 ```
 
@@ -2070,20 +2070,20 @@ Expected: containers stop without deleting PostgreSQL data, the working tree is 
 
 ## Final Acceptance Checklist
 
-- [ ] Docker Desktop displays exactly five containers in the `adockerwsl` Compose application.
-- [ ] Unify loads at `http://localhost:8080` and shows exactly three cards.
-- [ ] Project pages load at ports `8081`, `8082`, and `8083`.
+- [x] Docker Desktop displays exactly five containers in the `adockerwsl` Compose application.
+- [x] Unify loads at `http://localhost:8080` and shows exactly three cards.
+- [x] Project pages load at ports `8081`, `8082`, and `8083`.
 - [ ] Windows pgAdmin connects to the Docker PostgreSQL server at `localhost:5433`.
-- [ ] PostgreSQL contains four databases owned by four distinct non-superuser roles.
-- [ ] All four Laravel `/health` endpoints confirm their assigned database connection.
-- [ ] Stopping any project greys only its card within five seconds.
-- [ ] Restarting that project restores its card automatically.
-- [ ] No project communicates with another project.
-- [ ] `docker compose -f docker.yaml config --quiet` succeeds.
-- [ ] All four `php artisan test` suites pass in the disposable Composer test container.
-- [ ] All four frontend production builds succeed.
-- [ ] The GitHub repository is public and named `adockerwsl`.
-- [ ] The Staging workflow verifies the stack before publishing images.
-- [ ] Four public GHCR `:staging` images can be pulled anonymously.
-- [ ] The pulled staging images reproduce the complete local presentation.
-- [ ] `.env`, application keys, database passwords, `vendor`, `node_modules`, and Vite build output are absent from Git history.
+- [x] PostgreSQL contains four databases owned by four distinct non-superuser roles.
+- [x] All four Laravel `/health` endpoints confirm their assigned database connection.
+- [x] Stopping any project greys only its card within five seconds.
+- [x] Restarting that project restores its card automatically.
+- [x] No project communicates with another project.
+- [x] `docker compose -f docker.yaml config --quiet` succeeds.
+- [x] All four `php artisan test` suites pass in the disposable Composer test container.
+- [x] All four frontend production builds succeed.
+- [x] The GitHub repository is public and named `adockerwsl`.
+- [x] The Staging workflow verifies the stack before publishing images.
+- [x] Four public GHCR `:staging` images can be pulled anonymously.
+- [x] The pulled staging images reproduce the complete local presentation.
+- [x] The ignored `.env`, generated application keys, private credentials, `vendor`, `node_modules`, and Vite build output are absent from Git history; `.env.example` contains only documented demonstration defaults.
